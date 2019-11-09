@@ -1,0 +1,119 @@
+[
+  {
+    "avro": {
+      "type": "record",
+      "name": "Event",
+      "namespace": "in.ananthakumaran",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "logicalType": "uuid"
+        },
+        {
+          "name": "jid",
+          "type": { "type": "fixed", "name": "Jid", "size": 16 }
+        },
+        {
+          "name": "queue",
+          "type": "string"
+        },
+        {
+          "name": "class",
+          "type": "string"
+        },
+        {
+          "name": "args",
+          "type": {
+            "type": "array",
+            "items": { "type": "string", "logicalType": "string" }
+          }
+        },
+        {
+          "name": "status",
+          "type": {
+            "name": "Status",
+            "type": "enum",
+            "symbols": ["enqueued", "failed", "working", "complete", "dead"]
+          }
+        },
+        {
+          "name": "created_at",
+          "type": "string"
+        },
+        {
+          "name": "idempotency_key",
+          "type": ["null", "string"]
+        },
+        {
+          "name": "error",
+          "type": {
+            "type": "record",
+            "name": "Error",
+            "fields": [
+              {
+                "name": "detail",
+                "type": "string",
+                "logicalType": "json"
+              },
+              {
+                "name": "message",
+                "type": "string"
+              },
+              {
+                "name": "stack_trace",
+                "type": "string"
+              },
+              {
+                "name": "class",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "name": "retry_count",
+          "type": "int",
+          "default": 0
+        },
+        {
+          "name": "metadata",
+          "type": { "type": "map", "values": "string" }
+        }
+      ]
+    },
+    "bq": {
+      "fields": [
+        { "mode": "REQUIRED", "name": "id", "type": "STRING" },
+        { "mode": "REQUIRED", "name": "jid", "type": "BYTES" },
+        { "mode": "REQUIRED", "name": "queue", "type": "STRING" },
+        { "mode": "REQUIRED", "name": "class", "type": "STRING" },
+        { "mode": "REPEATED", "name": "args", "type": "STRING" },
+        { "mode": "REQUIRED", "name": "status", "type": "STRING" },
+        { "mode": "REQUIRED", "name": "created_at", "type": "STRING" },
+        { "mode": "NULLABLE", "name": "idempotency_key", "type": "STRING" },
+        {
+          "fields": [
+            { "mode": "REQUIRED", "name": "detail", "type": "STRING" },
+            { "mode": "REQUIRED", "name": "message", "type": "STRING" },
+            { "mode": "REQUIRED", "name": "stack_trace", "type": "STRING" },
+            { "mode": "REQUIRED", "name": "class", "type": "STRING" }
+          ],
+          "mode": "REQUIRED",
+          "name": "error",
+          "type": "RECORD"
+        },
+        { "mode": "REQUIRED", "name": "retry_count", "type": "INTEGER" },
+        {
+          "mode": "REPEATED",
+          "name": "metadata",
+          "type": "RECORD",
+          "fields": [
+            { "mode": "REQUIRED", "name": "key", "type": "STRING" },
+            { "mode": "REQUIRED", "name": "value", "type": "STRING" }
+          ]
+        }
+      ]
+    }
+  }
+]

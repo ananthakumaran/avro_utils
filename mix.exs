@@ -18,6 +18,9 @@ defmodule AvroUtils.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:erlavro, "~> 2.8"},
+      {:jason, "~> 1.0"}
+    ]
   end
 end

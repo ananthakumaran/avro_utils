@@ -1,0 +1,6 @@
+%{
+  "avlizer": {:hex, :avlizer, "0.3.3", "e082a5505705af0ce8733b20b78c481c97ceb88edba7fe33390c4f5496121ee5", [:rebar3], [{:erlavro, "2.8.1", [hex: :erlavro, repo: "hexpm", optional: false]}], "hexpm"},
+  "erlavro": {:hex, :erlavro, "2.8.1", "dba3fbe284ef87512cdc6c893cf3d851f137993b939591b76c8c3cf19950d18d", [:make, :rebar, :rebar3], [{:jsone, "1.4.6", [hex: :jsone, repo: "hexpm", optional: false]}], "hexpm"},
+  "jason": {:hex, :jason, "1.1.2", "b03dedea67a99223a2eaf9f1264ce37154564de899fd3d8b9a21b1a6fd64afe7", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
+  "jsone": {:hex, :jsone, "1.4.6", "644d6d57befb22c8e19b324dee19d73b1c004565009861a8f64c68b7b9e64dbf", [:rebar3], [], "hexpm"},
+}
