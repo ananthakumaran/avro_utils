@@ -1,0 +1,2 @@
+defmodule AvroUtils do
+end
