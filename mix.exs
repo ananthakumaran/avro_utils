@@ -20,7 +20,9 @@ defmodule AvroUtils.MixProject do
   defp deps do
     [
       {:erlavro, "~> 2.8"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:stream_data, "~> 0.1", only: [:test, :dev]},
+      {:randex, "~> 0.4", only: :test}
     ]
   end
 end

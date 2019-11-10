@@ -1,4 +1,8 @@
 defmodule AvroUtils.BigQuery do
+  defmodule UnsupportedType do
+    defexception message: "unsupported type"
+  end
+
   require Record
 
   @type schema :: term
@@ -79,6 +83,7 @@ defmodule AvroUtils.BigQuery do
 
   defp build_type(type) when Record.is_record(type, :avro_primitive_type) do
     case avro_primitive_type(type, :name) do
+      "null" -> raise UnsupportedType, message: "null type is not supported"
       "boolean" -> %{"type" => "BOOLEAN"}
       "int" -> %{"type" => "INTEGER"}
       "long" -> %{"type" => "INTEGER"}
@@ -100,9 +105,10 @@ defmodule AvroUtils.BigQuery do
   defp build_type(type) when Record.is_record(type, :avro_array_type) do
     item_type = avro_array_type(type, :type)
 
-    cond do
-      Record.is_record(item_type, :avro_primitive_type) ->
-        Map.merge(%{"mode" => "REPEATED"}, build_type(item_type))
+    if Record.is_record(item_type, :avro_array_type) do
+      raise UnsupportedType, message: "nested array type is not supported"
+    else
+      Map.merge(%{"mode" => "REPEATED"}, build_type(item_type))
     end
   end
 
@@ -133,6 +139,9 @@ defmodule AvroUtils.BigQuery do
 
       length(non_nullable) == 1 ->
         Map.merge(%{"mode" => "NULLABLE"}, build_type(hd(non_nullable)))
+
+      true ->
+        raise UnsupportedType, message: "unsupported union type"
     end
   end
 
