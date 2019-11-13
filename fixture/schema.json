@@ -7,8 +7,7 @@
       "fields": [
         {
           "name": "id",
-          "type": "string",
-          "logicalType": "uuid"
+          "type": { "type": "string", "logicalType": "uuid" }
         },
         {
           "name": "jid",
@@ -26,7 +25,7 @@
           "name": "args",
           "type": {
             "type": "array",
-            "items": { "type": "string", "logicalType": "string" }
+            "items": { "type": "string" }
           }
         },
         {
@@ -42,6 +41,26 @@
           "type": "string"
         },
         {
+          "name": "created_at_date",
+          "type": { "type": "int", "logicalType": "date" }
+        },
+        {
+          "name": "created_at_time_millis",
+          "type": { "type": "int", "logicalType": "time-millis" }
+        },
+        {
+          "name": "created_at_time_micros",
+          "type": { "type": "long", "logicalType": "time-micros" }
+        },
+        {
+          "name": "created_at_timestamp_millis",
+          "type": { "type": "long", "logicalType": "timestamp-millis" }
+        },
+        {
+          "name": "created_at_timestamp_micros",
+          "type": { "type": "long", "logicalType": "timestamp-micros" }
+        },
+        {
           "name": "idempotency_key",
           "type": ["null", "string"]
         },
@@ -53,8 +72,7 @@
             "fields": [
               {
                 "name": "detail",
-                "type": "string",
-                "logicalType": "json"
+                "type": { "type": "string", "logicalType": "json" }
               },
               {
                 "name": "message",
@@ -91,6 +109,27 @@
         { "mode": "REPEATED", "name": "args", "type": "STRING" },
         { "mode": "REQUIRED", "name": "status", "type": "STRING" },
         { "mode": "REQUIRED", "name": "created_at", "type": "STRING" },
+        { "mode": "REQUIRED", "name": "created_at_date", "type": "DATE" },
+        {
+          "mode": "REQUIRED",
+          "name": "created_at_time_millis",
+          "type": "TIME"
+        },
+        {
+          "mode": "REQUIRED",
+          "name": "created_at_time_micros",
+          "type": "TIME"
+        },
+        {
+          "mode": "REQUIRED",
+          "name": "created_at_timestamp_millis",
+          "type": "TIMESTAMP"
+        },
+        {
+          "mode": "REQUIRED",
+          "name": "created_at_timestamp_micros",
+          "type": "TIMESTAMP"
+        },
         { "mode": "NULLABLE", "name": "idempotency_key", "type": "STRING" },
         {
           "fields": [

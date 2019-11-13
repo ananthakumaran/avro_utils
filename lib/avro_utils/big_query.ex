@@ -82,15 +82,23 @@ defmodule AvroUtils.BigQuery do
   end
 
   defp build_type(type) when Record.is_record(type, :avro_primitive_type) do
-    case avro_primitive_type(type, :name) do
-      "null" -> raise UnsupportedType, message: "null type is not supported"
-      "boolean" -> %{"type" => "BOOLEAN"}
-      "int" -> %{"type" => "INTEGER"}
-      "long" -> %{"type" => "INTEGER"}
-      "float" -> %{"type" => "FLOAT"}
-      "double" -> %{"type" => "FLOAT"}
-      "bytes" -> %{"type" => "BYTES"}
-      "string" -> %{"type" => "STRING"}
+    custom_properties = :avro.get_custom_props(type)
+    logical_type = :proplists.get_value("logicalType", custom_properties)
+
+    case {avro_primitive_type(type, :name), logical_type} do
+      {"null", _} -> raise UnsupportedType, message: "null type is not supported"
+      {"boolean", _} -> %{"type" => "BOOLEAN"}
+      {"int", "date"} -> %{"type" => "DATE"}
+      {"int", "time-millis"} -> %{"type" => "TIME"}
+      {"int", _} -> %{"type" => "INTEGER"}
+      {"long", "time-micros"} -> %{"type" => "TIME"}
+      {"long", "timestamp-millis"} -> %{"type" => "TIMESTAMP"}
+      {"long", "timestamp-micros"} -> %{"type" => "TIMESTAMP"}
+      {"long", _} -> %{"type" => "INTEGER"}
+      {"float", _} -> %{"type" => "FLOAT"}
+      {"double", _} -> %{"type" => "FLOAT"}
+      {"bytes", _} -> %{"type" => "BYTES"}
+      {"string", _} -> %{"type" => "STRING"}
     end
   end
 

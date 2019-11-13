@@ -35,7 +35,11 @@ defmodule AvroUtils.BigQueryTest do
   end
 
   defp avro_type(options \\ []) do
-    frequency([{3, primitive_type(options)}, {1, complex_type(options)}])
+    frequency([
+      {3, primitive_type(options)},
+      {1, logical_type(options)},
+      {1, complex_type(options)}
+    ])
   end
 
   defp primitive_type(options) do
@@ -58,6 +62,16 @@ defmodule AvroUtils.BigQueryTest do
           avro_string()
         ]
     )
+  end
+
+  defp logical_type(_) do
+    one_of([
+      avro_date(),
+      avro_millis(),
+      avro_micros(),
+      avro_timestamp_millis(),
+      avro_timestamp_micros()
+    ])
   end
 
   defp complex_type(options) do
@@ -88,6 +102,16 @@ defmodule AvroUtils.BigQueryTest do
   def avro_double(), do: constant(%{"type" => "double"})
   def avro_bytes(), do: constant(%{"type" => "bytes"})
   def avro_string(), do: constant(%{"type" => "string"})
+
+  def avro_date(), do: constant(%{"type" => "int", "logicalType" => "date"})
+  def avro_millis(), do: constant(%{"type" => "int", "logicalType" => "time-millis"})
+  def avro_micros(), do: constant(%{"type" => "long", "logicalType" => "time-micros"})
+
+  def avro_timestamp_millis(),
+    do: constant(%{"type" => "int", "logicalType" => "timestamp-millis"})
+
+  def avro_timestamp_micros(),
+    do: constant(%{"type" => "int", "logicalType" => "timestamp-micros"})
 
   def avro_enum() do
     fixed_map(%{
