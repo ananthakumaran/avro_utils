@@ -72,7 +72,7 @@
             "fields": [
               {
                 "name": "detail",
-                "type": { "type": "string", "logicalType": "json" }
+                "type": { "type": "string", "bq.transform": "any_to_json" }
               },
               {
                 "name": "message",
@@ -153,6 +153,56 @@
           ]
         }
       ]
-    }
+    },
+    "transforms": [
+      {
+        "from": {
+          "id": "52a3c0d7-3a2e-4669-9979-a2a37a852430",
+          "jid": "52a3c0d7-3a2e-4669-9979-a2a37a852430",
+          "queue": "high",
+          "class": "Worker",
+          "args": ["a", "b"],
+          "status": "complete",
+          "created_at": "2019-10-14T06:47:41.211Z",
+          "created_at_date": 18183,
+          "created_at_time_millis": 24461211,
+          "created_at_time_micros": 24461211000,
+          "created_at_timestamp_millis": 1571035661211,
+          "created_at_timestamp_micros": 1571035661211000,
+          "error": {
+            "detail": { "reason": "invalid format" },
+            "message": "cannot parse \"2019-10-14T06:47:41\" as date, reason: :invalid_format",
+            "class": "ArgumentError",
+            "stack_trace": "(elixir) lib/calendar/date.ex:312: Date.from_iso8601!/2\n(elixir) expanding macro: Kernel.sigil_D/2"
+          },
+          "retry_count": 5,
+          "metadata": { "name": "jack" },
+          "idempotency_key": "1234"
+        },
+        "to": {
+          "args": ["a", "b"],
+          "class": "Worker",
+          "created_at": "2019-10-14T06:47:41.211Z",
+          "created_at_date": "2019-10-14",
+          "created_at_time_micros": "06:47:41.211000",
+          "created_at_time_millis": "06:47:41.211000",
+          "created_at_timestamp_micros": "2019-10-14T06:47:41.211000Z",
+          "created_at_timestamp_millis": "2019-10-14T06:47:41.211Z",
+          "error": {
+            "class": "ArgumentError",
+            "detail": "{\"reason\":\"invalid format\"}",
+            "message": "cannot parse \"2019-10-14T06:47:41\" as date, reason: :invalid_format",
+            "stack_trace": "(elixir) lib/calendar/date.ex:312: Date.from_iso8601!/2\n(elixir) expanding macro: Kernel.sigil_D/2"
+          },
+          "id": "52a3c0d7-3a2e-4669-9979-a2a37a852430",
+          "jid": "52a3c0d7-3a2e-4669-9979-a2a37a852430",
+          "metadata": [{ "key": "name", "value": "jack" }],
+          "queue": "high",
+          "retry_count": 5,
+          "status": "complete",
+          "idempotency_key": "1234"
+        }
+      }
+    ]
   }
 ]

@@ -1,70 +1,12 @@
 defmodule AvroUtils.BigQuery do
-  defmodule UnsupportedType do
-    defexception message: "unsupported type"
-  end
-
+  import AvroUtils
   require Record
 
   @type schema :: term
 
-  Record.defrecord(:avro_record_type, [
-    :name,
-    :namespace,
-    :doc,
-    :aliases,
-    :fields,
-    :fields,
-    :fullname,
-    :custom
-  ])
-
-  Record.defrecord(:avro_record_field, [
-    :name,
-    :doc,
-    :type,
-    :default,
-    :order,
-    :aliases
-  ])
-
-  Record.defrecord(:avro_primitive_type, [
-    :name,
-    :custom
-  ])
-
-  Record.defrecord(:avro_enum_type, [
-    :name,
-    :namespace,
-    :aliases,
-    :doc,
-    :symbols,
-    :fullname,
-    :custom
-  ])
-
-  Record.defrecord(:avro_array_type, [
-    :type,
-    :custom
-  ])
-
-  Record.defrecord(:avro_map_type, [
-    :type,
-    :custom
-  ])
-
-  Record.defrecord(:avro_union_type, [
-    :id2type,
-    :name2id
-  ])
-
-  Record.defrecord(:avro_fixed_type, [
-    :name,
-    :namespace,
-    :aliases,
-    :size,
-    :fullname,
-    :custom
-  ])
+  defmodule UnsupportedType do
+    defexception message: "unsupported type"
+  end
 
   @spec to_schema(:avro.record_type()) :: schema
   def to_schema(type) when Record.is_record(type, :avro_record_type) do
