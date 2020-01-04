@@ -193,6 +193,9 @@ defmodule AvroUtils.Transformer do
   defp transform_primitive_type(_, "int", _, _, value) when is_integer(value), do: value
   defp transform_primitive_type(_, "long", _, _, value) when is_integer(value), do: value
 
+  defp transform_primitive_type(_, "bytes", _, _, value) when is_binary(value),
+    do: Base.encode64(value)
+
   defp transform_primitive_type(_, "float", _, _, value)
        when is_integer(value) or is_float(value),
        do: value
