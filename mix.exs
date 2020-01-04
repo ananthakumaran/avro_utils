@@ -22,7 +22,12 @@ defmodule AvroUtils.MixProject do
       {:erlavro, "~> 2.8"},
       {:jason, "~> 1.0"},
       {:stream_data, "~> 0.1", only: [:test, :dev]},
-      {:randex, "~> 0.4", only: :test}
+      {:randex, "~> 0.4", only: :test},
+      {:google_api_big_query, "~> 0.4", only: :test},
+      {:goth, "~> 1.1", only: :test},
+      {:jose, "~> 1.9.0", only: :test},
+      {:hackney, "~> 1.13", only: :test},
+      {:temp, "~> 0.4", only: :test}
     ]
   end
 end

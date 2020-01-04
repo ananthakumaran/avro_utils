@@ -83,7 +83,7 @@ defmodule AvroUtils.Transformer do
 
   defp transform_type(field, type, value) when Record.is_record(type, :avro_fixed_type) do
     if is_binary(value) do
-      value
+      Base.encode64(value)
     else
       raise InvalidType,
         message: "expected binary type, found #{inspect(value)}",
