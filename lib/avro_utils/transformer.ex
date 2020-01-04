@@ -15,8 +15,8 @@ defmodule AvroUtils.Transformer do
     error in [InvalidType] -> {:error, error}
   end
 
-  def transform_record(type, value)
-      when Record.is_record(type, :avro_record_type) do
+  defp transform_record(type, value)
+       when Record.is_record(type, :avro_record_type) do
     if is_map(value) do
       Enum.flat_map(avro_record_type(type, :fields), fn field ->
         transform_field(field, Map.get(value, avro_record_field(field, :name)))
@@ -29,7 +29,7 @@ defmodule AvroUtils.Transformer do
     end
   end
 
-  def transform_field(field, value) when is_nil(value) do
+  defp transform_field(field, value) when is_nil(value) do
     type = avro_record_field(field, :type)
 
     if nullable?(type) do
@@ -41,7 +41,7 @@ defmodule AvroUtils.Transformer do
     end
   end
 
-  def transform_field(field, value) do
+  defp transform_field(field, value) do
     [
       {avro_record_field(field, :name),
        transform_type(field, avro_record_field(field, :type), value)}
