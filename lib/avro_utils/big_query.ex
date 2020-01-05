@@ -8,22 +8,22 @@ defmodule AvroUtils.BigQuery do
     defexception message: "unsupported type"
   end
 
-  @spec to_schema(:avro.record_type()) :: schema
-  def to_schema(type) when Record.is_record(type, :avro_record_type) do
-    %{"fields" => Enum.map(avro_record_type(type, :fields), &build_field/1)}
+  @spec to_schema(:avro.record_type(), Keyword.t()) :: schema
+  def to_schema(type, options \\ []) when Record.is_record(type, :avro_record_type) do
+    %{"fields" => Enum.map(avro_record_type(type, :fields), &build_field(&1, options))}
   end
 
-  defp build_field(field) do
+  defp build_field(field, options) do
     Map.merge(
       %{
         "name" => avro_record_field(field, :name),
-        "mode" => "REQUIRED"
+        "mode" => default_mode(options)
       },
-      build_type(avro_record_field(field, :type))
+      build_type(avro_record_field(field, :type), options)
     )
   end
 
-  defp build_type(type) when Record.is_record(type, :avro_primitive_type) do
+  defp build_type(type, _options) when Record.is_record(type, :avro_primitive_type) do
     custom_properties = :avro.get_custom_props(type)
     logical_type = :proplists.get_value("logicalType", custom_properties)
 
@@ -44,25 +44,25 @@ defmodule AvroUtils.BigQuery do
     end
   end
 
-  defp build_type(type) when Record.is_record(type, :avro_enum_type) do
+  defp build_type(type, _options) when Record.is_record(type, :avro_enum_type) do
     %{"type" => "STRING"}
   end
 
-  defp build_type(type) when Record.is_record(type, :avro_fixed_type) do
+  defp build_type(type, _options) when Record.is_record(type, :avro_fixed_type) do
     %{"type" => "BYTES"}
   end
 
-  defp build_type(type) when Record.is_record(type, :avro_array_type) do
+  defp build_type(type, options) when Record.is_record(type, :avro_array_type) do
     item_type = avro_array_type(type, :type)
 
     if Record.is_record(item_type, :avro_array_type) do
       raise UnsupportedType, message: "nested array type is not supported"
     else
-      Map.merge(%{"mode" => "REPEATED"}, build_type(item_type))
+      Map.merge(%{"mode" => "REPEATED"}, build_type(item_type, options))
     end
   end
 
-  defp build_type(type) when Record.is_record(type, :avro_map_type) do
+  defp build_type(type, options) when Record.is_record(type, :avro_map_type) do
     value_type = avro_map_type(type, :type)
 
     %{
@@ -70,25 +70,28 @@ defmodule AvroUtils.BigQuery do
       "type" => "RECORD",
       "fields" => [
         %{"type" => "STRING", "mode" => "REQUIRED", "name" => "key"},
-        Map.merge(%{"name" => "value", "mode" => "REQUIRED"}, build_type(value_type))
+        Map.merge(
+          %{"name" => "value", "mode" => default_mode(options)},
+          build_type(value_type, options)
+        )
       ]
     }
   end
 
-  defp build_type(type) when Record.is_record(type, :avro_record_type) do
-    Map.merge(%{"type" => "RECORD"}, to_schema(type))
+  defp build_type(type, options) when Record.is_record(type, :avro_record_type) do
+    Map.merge(%{"type" => "RECORD"}, to_schema(type, options))
   end
 
-  defp build_type(type) when Record.is_record(type, :avro_union_type) do
+  defp build_type(type, options) when Record.is_record(type, :avro_union_type) do
     types = :avro_union.get_types(type)
     non_nullable = non_nullable_types(types)
 
     cond do
       length(types) == 1 ->
-        build_type(hd(types))
+        build_type(hd(types), options)
 
       length(non_nullable) == 1 ->
-        Map.merge(%{"mode" => "NULLABLE"}, build_type(hd(non_nullable)))
+        Map.merge(%{"mode" => "NULLABLE"}, build_type(hd(non_nullable), options))
 
       true ->
         raise UnsupportedType, message: "unsupported union type"
@@ -99,5 +102,13 @@ defmodule AvroUtils.BigQuery do
     Enum.reject(types, fn type ->
       Record.is_record(type, :avro_primitive_type) && avro_primitive_type(type, :name) == "null"
     end)
+  end
+
+  defp default_mode(options) do
+    if Keyword.get(options, :all_fields_nullable) do
+      "NULLABLE"
+    else
+      "REQUIRED"
+    end
   end
 end

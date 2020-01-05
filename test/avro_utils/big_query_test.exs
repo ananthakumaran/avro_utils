@@ -154,7 +154,7 @@ defmodule AvroUtils.BigQueryTest do
   end
 
   defp name() do
-    Randex.stream(~r/[A-Za-z_][A-Za-z0-9_]{0,8}/, mod: Randex.Generator.StreamData)
+    Randex.stream(~r/[A-Za-z_][A-Za-z0-9_]{1,8}/, mod: Randex.Generator.StreamData)
   end
 
   defp lazy(callback) do
