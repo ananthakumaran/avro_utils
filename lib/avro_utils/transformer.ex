@@ -173,6 +173,9 @@ defmodule AvroUtils.Transformer do
   defp transform_primitive_type(_, "string", _, "any_to_json", value),
     do: Jason.encode!(value)
 
+  defp transform_primitive_type(_, "string", _, "iso8601_to_timestamp", value),
+    do: value
+
   defp transform_primitive_type(_, "int", "date", _, value) when is_integer(value),
     do: Date.to_string(Date.add(~D[1970-01-01], value))
 
