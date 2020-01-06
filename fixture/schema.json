@@ -101,6 +101,10 @@
         {
           "name": "full_name",
           "type": { "type": "string", "bq.source_name": "full-name" }
+        },
+        {
+          "name": "first_name",
+          "type": ["null", { "type": "string", "bq.source_name": "first-name" }]
         }
       ]
     },
@@ -156,7 +160,8 @@
             { "mode": "REQUIRED", "name": "value", "type": "STRING" }
           ]
         },
-        { "mode": "REQUIRED", "name": "full_name", "type": "STRING" }
+        { "mode": "REQUIRED", "name": "full_name", "type": "STRING" },
+        { "mode": "NULLABLE", "name": "first_name", "type": "STRING" }
       ]
     },
     "transforms": [
@@ -183,7 +188,8 @@
           "retry_count": 5,
           "metadata": { "name": "jack" },
           "idempotency_key": "1234",
-          "full-name": "jack"
+          "full-name": "jack",
+          "first-name": "jill"
         },
         "to": {
           "args": ["a", "b"],
@@ -207,7 +213,8 @@
           "retry_count": 5,
           "status": "complete",
           "idempotency_key": "1234",
-          "full_name": "jack"
+          "full_name": "jack",
+          "first_name": "jill"
         }
       },
       {
@@ -232,7 +239,8 @@
           },
           "retry_count": 5,
           "metadata": { "gender": "male" },
-          "full-name": "jack"
+          "full-name": "jack",
+          "first-name": "jill"
         },
         "to": {
           "args": [],
@@ -255,7 +263,8 @@
           "queue": "high",
           "retry_count": 5,
           "status": "complete",
-          "full_name": "jack"
+          "full_name": "jack",
+          "first_name": "jill"
         }
       }
     ]

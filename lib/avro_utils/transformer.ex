@@ -203,6 +203,18 @@ defmodule AvroUtils.Transformer do
 
   defp field_source_name(field) do
     type = avro_record_field(field, :type)
+
+    type =
+      cond do
+        Record.is_record(type, :avro_union_type) ->
+          types = :avro_union.get_types(type)
+          non_nullable = non_nullable_types(types)
+          hd(non_nullable)
+
+        true ->
+          type
+      end
+
     custom_properties = :avro.get_custom_props(type)
     source_name = :proplists.get_value("bq.source_name", custom_properties, nil)
     source_name || avro_record_field(field, :name)
