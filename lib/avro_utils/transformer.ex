@@ -6,20 +6,20 @@ defmodule AvroUtils.Transformer do
     defexception message: "invalid type", field: nil
   end
 
-  @spec to_big_query(:avro.record_type(), term) :: term
-  def to_big_query(type, value)
+  @spec to_big_query(:avro.record_type(), term, Keyword.t()) :: term
+  def to_big_query(type, value, options \\ [])
       when Record.is_record(type, :avro_record_type) and is_map(value) do
-    value = transform_record(type, value)
+    value = transform_record(type, value, options)
     {:ok, value}
   rescue
     error in [InvalidType] -> {:error, error}
   end
 
-  defp transform_record(type, value)
+  defp transform_record(type, value, options)
        when Record.is_record(type, :avro_record_type) do
     if is_map(value) do
       Enum.flat_map(avro_record_type(type, :fields), fn field ->
-        transform_field(field, Map.get(value, avro_record_field(field, :name)))
+        transform_field(field, Map.get(value, avro_record_field(field, :name)), options)
       end)
       |> Enum.into(%{})
     else
@@ -29,10 +29,10 @@ defmodule AvroUtils.Transformer do
     end
   end
 
-  defp transform_field(field, value) when is_nil(value) do
+  defp transform_field(field, value, options) when is_nil(value) do
     type = avro_record_field(field, :type)
 
-    if nullable?(type) do
+    if nullable?(type) || Keyword.get(options, :all_fields_nullable) do
       []
     else
       raise InvalidType,
@@ -41,14 +41,15 @@ defmodule AvroUtils.Transformer do
     end
   end
 
-  defp transform_field(field, value) do
+  defp transform_field(field, value, options) do
     [
       {avro_record_field(field, :name),
-       transform_type(field, avro_record_field(field, :type), value)}
+       transform_type(field, avro_record_field(field, :type), value, options)}
     ]
   end
 
-  defp transform_type(field, type, value) when Record.is_record(type, :avro_primitive_type) do
+  defp transform_type(field, type, value, _options)
+       when Record.is_record(type, :avro_primitive_type) do
     custom_properties = :avro.get_custom_props(type)
     bq_transform = :proplists.get_value("bq.transform", custom_properties)
     logical_type = :proplists.get_value("logicalType", custom_properties)
@@ -62,7 +63,8 @@ defmodule AvroUtils.Transformer do
     )
   end
 
-  defp transform_type(field, type, value) when Record.is_record(type, :avro_enum_type) do
+  defp transform_type(field, type, value, _options)
+       when Record.is_record(type, :avro_enum_type) do
     symbols = avro_enum_type(type, :symbols)
 
     cond do
@@ -81,7 +83,8 @@ defmodule AvroUtils.Transformer do
     end
   end
 
-  defp transform_type(field, type, value) when Record.is_record(type, :avro_fixed_type) do
+  defp transform_type(field, type, value, _options)
+       when Record.is_record(type, :avro_fixed_type) do
     if is_binary(value) do
       Base.encode64(value)
     else
@@ -91,7 +94,8 @@ defmodule AvroUtils.Transformer do
     end
   end
 
-  defp transform_type(field, type, value) when Record.is_record(type, :avro_array_type) do
+  defp transform_type(field, type, value, options)
+       when Record.is_record(type, :avro_array_type) do
     item_type = avro_array_type(type, :type)
 
     cond do
@@ -104,11 +108,11 @@ defmodule AvroUtils.Transformer do
           field: field
 
       true ->
-        Enum.map(value, fn value -> transform_type(field, item_type, value) end)
+        Enum.map(value, fn value -> transform_type(field, item_type, value, options) end)
     end
   end
 
-  defp transform_type(field, type, value) when Record.is_record(type, :avro_map_type) do
+  defp transform_type(field, type, value, options) when Record.is_record(type, :avro_map_type) do
     value_type = avro_map_type(type, :type)
 
     cond do
@@ -126,26 +130,28 @@ defmodule AvroUtils.Transformer do
                 field: field
 
             true ->
-              %{"key" => key, "value" => transform_type(field, value_type, value)}
+              %{"key" => key, "value" => transform_type(field, value_type, value, options)}
           end
         end)
     end
   end
 
-  defp transform_type(_field, type, value) when Record.is_record(type, :avro_record_type) do
-    transform_record(type, value)
+  defp transform_type(_field, type, value, options)
+       when Record.is_record(type, :avro_record_type) do
+    transform_record(type, value, options)
   end
 
-  defp transform_type(field, type, value) when Record.is_record(type, :avro_union_type) do
+  defp transform_type(field, type, value, options)
+       when Record.is_record(type, :avro_union_type) do
     types = :avro_union.get_types(type)
     non_nullable = non_nullable_types(types)
 
     cond do
       length(types) == 1 ->
-        transform_type(field, hd(types), value)
+        transform_type(field, hd(types), value, options)
 
       length(non_nullable) == 1 ->
-        transform_type(field, hd(non_nullable), value)
+        transform_type(field, hd(non_nullable), value, options)
 
       true ->
         raise InvalidType, message: "unsupported union type"
