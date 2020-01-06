@@ -9,13 +9,13 @@ defmodule AvroUtils.BigQueryTest do
       |> Jason.decode!()
 
     for %{"avro" => avro, "bq" => bq} <- pairs do
-      assert BigQuery.to_schema(:avro.decode_schema(Jason.encode!(avro))) == bq
+      assert BigQuery.to_schema(:avro.decode_schema(Jason.encode!(avro))) == {:ok, bq}
     end
   end
 
   property "nesting" do
     check all schema <- avro_record() do
-      BigQuery.to_schema(:avro.decode_schema(Jason.encode!(schema)))
+      {:ok, _schema} = BigQuery.to_schema(:avro.decode_schema(Jason.encode!(schema)))
     end
   end
 

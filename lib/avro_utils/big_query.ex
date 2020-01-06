@@ -10,6 +10,13 @@ defmodule AvroUtils.BigQuery do
 
   @spec to_schema(:avro.record_type(), Keyword.t()) :: schema
   def to_schema(type, options \\ []) when Record.is_record(type, :avro_record_type) do
+    schema = build_record(type, options)
+    {:ok, schema}
+  rescue
+    error in [UnsupportedType] -> {:error, error}
+  end
+
+  defp build_record(type, options) do
     %{"fields" => Enum.map(avro_record_type(type, :fields), &build_field(&1, options))}
   end
 
@@ -81,7 +88,7 @@ defmodule AvroUtils.BigQuery do
   end
 
   defp build_type(type, options) when Record.is_record(type, :avro_record_type) do
-    Map.merge(%{"type" => "RECORD"}, to_schema(type, options))
+    Map.merge(%{"type" => "RECORD"}, build_record(type, options))
   end
 
   defp build_type(type, options) when Record.is_record(type, :avro_union_type) do
