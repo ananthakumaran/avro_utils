@@ -97,6 +97,10 @@
         {
           "name": "metadata",
           "type": { "type": "map", "values": "string" }
+        },
+        {
+          "name": "full_name",
+          "type": { "type": "string", "bq.source_name": "full-name" }
         }
       ]
     },
@@ -151,7 +155,8 @@
             { "mode": "REQUIRED", "name": "key", "type": "STRING" },
             { "mode": "REQUIRED", "name": "value", "type": "STRING" }
           ]
-        }
+        },
+        { "mode": "REQUIRED", "name": "full_name", "type": "STRING" }
       ]
     },
     "transforms": [
@@ -177,7 +182,8 @@
           },
           "retry_count": 5,
           "metadata": { "name": "jack" },
-          "idempotency_key": "1234"
+          "idempotency_key": "1234",
+          "full-name": "jack"
         },
         "to": {
           "args": ["a", "b"],
@@ -200,7 +206,8 @@
           "queue": "high",
           "retry_count": 5,
           "status": "complete",
-          "idempotency_key": "1234"
+          "idempotency_key": "1234",
+          "full_name": "jack"
         }
       },
       {
@@ -224,7 +231,8 @@
             "stack_trace": "(elixir) lib/calendar/date.ex:312: Date.from_iso8601!/2\n(elixir) expanding macro: Kernel.sigil_D/2"
           },
           "retry_count": 5,
-          "metadata": { "gender": "male" }
+          "metadata": { "gender": "male" },
+          "full-name": "jack"
         },
         "to": {
           "args": [],
@@ -246,7 +254,8 @@
           "metadata": [{ "key": "gender", "value": "male" }],
           "queue": "high",
           "retry_count": 5,
-          "status": "complete"
+          "status": "complete",
+          "full_name": "jack"
         }
       }
     ]

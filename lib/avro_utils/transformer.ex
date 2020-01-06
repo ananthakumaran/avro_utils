@@ -19,7 +19,7 @@ defmodule AvroUtils.Transformer do
        when Record.is_record(type, :avro_record_type) do
     if is_map(value) do
       Enum.flat_map(avro_record_type(type, :fields), fn field ->
-        transform_field(field, Map.get(value, avro_record_field(field, :name)), options)
+        transform_field(field, Map.get(value, field_source_name(field)), options)
       end)
       |> Enum.into(%{})
     else
@@ -158,24 +158,6 @@ defmodule AvroUtils.Transformer do
     end
   end
 
-  defp non_nullable_types(types) do
-    Enum.reject(types, fn type ->
-      Record.is_record(type, :avro_primitive_type) && avro_primitive_type(type, :name) == "null"
-    end)
-  end
-
-  defp nullable?(type) do
-    if Record.is_record(type, :avro_union_type) do
-      types = :avro_union.get_types(type)
-
-      Enum.any?(types, fn type ->
-        Record.is_record(type, :avro_primitive_type) && avro_primitive_type(type, :name) == "null"
-      end)
-    else
-      false
-    end
-  end
-
   defp transform_primitive_type(_, "string", _, "any_to_json", value),
     do: Jason.encode!(value)
 
@@ -217,5 +199,30 @@ defmodule AvroUtils.Transformer do
     raise InvalidType,
       message: "expected #{type} type, found #{inspect(value)}",
       field: field
+  end
+
+  defp field_source_name(field) do
+    type = avro_record_field(field, :type)
+    custom_properties = :avro.get_custom_props(type)
+    source_name = :proplists.get_value("bq.source_name", custom_properties, nil)
+    source_name || avro_record_field(field, :name)
+  end
+
+  defp non_nullable_types(types) do
+    Enum.reject(types, fn type ->
+      Record.is_record(type, :avro_primitive_type) && avro_primitive_type(type, :name) == "null"
+    end)
+  end
+
+  defp nullable?(type) do
+    if Record.is_record(type, :avro_union_type) do
+      types = :avro_union.get_types(type)
+
+      Enum.any?(types, fn type ->
+        Record.is_record(type, :avro_primitive_type) && avro_primitive_type(type, :name) == "null"
+      end)
+    else
+      false
+    end
   end
 end
