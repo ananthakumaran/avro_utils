@@ -8,7 +8,7 @@ schema
 #### Primitive Types
 
 | Avro    | BigQuery      |
---------------------------
+|---------|---------------|
 | null    | not supported |
 | boolean | BOOLEAN       |
 | int     | INTEGER       |
@@ -21,8 +21,8 @@ schema
 
 #### Complex Types
 
-| Avro    | BigQuery      |
---------------------------
+| Avro   | BigQuery                                                            |
+|--------|---------------------------------------------------------------------|
 | record | RECORD                                                              |
 | enum   | STRING                                                              |
 | array  | REPEATED                                                            |
@@ -32,8 +32,8 @@ schema
 
 #### Logical Types
 
-| Avro    | BigQuery      |
---------------------------
+| Avro             | BigQuery  |
+|------------------|-----------|
 | time-millis      | TIME      |
 | time-micros      | TIME      |
 | timestamp-millis | TIMESTAMP |
@@ -42,9 +42,15 @@ schema
 
 #### bq.transform
 
-| Avro                 | BigQuery  |
-------------------------------------
-| any_to_json          | STRING    |
-| iso8601_to_timestamp | TIMESTAMP |
+| Avro                                                                                           | BigQuery                                                            |
+|------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| `{"name": "created_at", "type": { "type": "string", "bq.transform": "iso8601_to_timestamp" }}` | `{ "mode": "REQUIRED", "name": "created_at", "type": "TIMESTAMP" }` |
+| `{"name": "detail","type": { "type": "string", "bq.transform": "any_to_json" }}`               | `{ "mode": "REQUIRED", "name": "detail", "type": "STRING" }`        |
+
+#### bq.source_name
+
+| Avro                                                                                | BigQuery                                                        |
+|-------------------------------------------------------------------------------------|-----------------------------------------------------------------|
+| `{"name": "full_name","type": { "type": "string", "bq.source_name": "full-name" }}` | `{ "mode": "REQUIRED", "name": "full_name", "type": "STRING" }` |
 
 
