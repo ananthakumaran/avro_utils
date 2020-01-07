@@ -1,5 +1,7 @@
 # AvroUtils
 
+[![Hex.pm](https://img.shields.io/hexpm/v/avro_utils.svg)](https://hex.pm/packages/avro_utils)
+
 Utility library to convert struct to BigQuery compatible json based on
 avro schema
 
