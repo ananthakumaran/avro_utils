@@ -1,12 +1,21 @@
 defmodule AvroUtils.Transformer do
-  import AvroUtils
+  import AvroUtils.Records
   require Record
 
   defmodule InvalidType do
     defexception message: "invalid type", field: nil
+    @type t :: %__MODULE__{message: binary, field: term}
   end
 
-  @spec to_big_query(:avro.record_type(), term, Keyword.t()) :: term
+  @doc """
+  Converts value to BigQuery compatible json based on the avro record
+
+  ### Options
+
+  `all_fields_nullable` (boolean) - Whether to consider all fields nullable. Defaults to `false`.
+  """
+  @spec to_big_query(:avro.record_type(), map, Keyword.t()) ::
+          {:ok, map} | {:error, InvalidType.t()}
   def to_big_query(type, value, options \\ [])
       when Record.is_record(type, :avro_record_type) and is_map(value) do
     value = transform_record(type, value, options)

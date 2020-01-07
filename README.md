@@ -1,7 +1,7 @@
 # AvroUtils
 
-Utility library to convert struct to BigQuery compatible json based on avro
-schema
+Utility library to convert struct to BigQuery compatible json based on
+avro schema
 
 ### Avro Type Conversion
 
@@ -17,7 +17,6 @@ schema
 | double  | FLOAT         |
 | bytes   | BYTES         |
 | string  | STRING        |
-|         |               |
 
 #### Complex Types
 

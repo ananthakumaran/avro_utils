@@ -1,14 +1,23 @@
 defmodule AvroUtils.BigQuery do
-  import AvroUtils
+  import AvroUtils.Records
   require Record
 
-  @type schema :: term
+  @type schema :: map
 
   defmodule UnsupportedType do
     defexception message: "unsupported type"
+    @type t :: %__MODULE__{message: binary}
   end
 
-  @spec to_schema(:avro.record_type(), Keyword.t()) :: schema
+  @doc """
+  Converts avro record to BigQuery table schema
+
+  ### Options
+
+  `all_fields_nullable` (boolean) - Whether to consider all fields nullable. Defaults to `false`.
+  """
+  @spec to_schema(:avro.record_type(), Keyword.t()) ::
+          {:ok, schema} | {:error, UnsupportedType.t()}
   def to_schema(type, options \\ []) when Record.is_record(type, :avro_record_type) do
     schema = build_record(type, options)
     {:ok, schema}
