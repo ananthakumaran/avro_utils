@@ -9,16 +9,16 @@ avro schema
 
 #### Primitive Types
 
-| Avro    | BigQuery      |
-|---------|---------------|
-| null    | not supported |
-| boolean | BOOLEAN       |
-| int     | INTEGER       |
-| long    | INTEGER       |
-| float   | FLOAT         |
-| double  | FLOAT         |
-| bytes   | BYTES         |
-| string  | STRING        |
+| Avro    | BigQuery                            |
+|---------|-------------------------------------|
+| null    | could be used as part of union type |
+| boolean | BOOLEAN                             |
+| int     | INTEGER                             |
+| long    | INTEGER                             |
+| float   | FLOAT                               |
+| double  | FLOAT                               |
+| bytes   | BYTES                               |
+| string  | STRING                              |
 
 #### Complex Types
 
@@ -35,6 +35,7 @@ avro schema
 
 | Avro             | BigQuery  |
 |------------------|-----------|
+| date             | DATE      |
 | time-millis      | TIME      |
 | time-micros      | TIME      |
 | timestamp-millis | TIMESTAMP |
