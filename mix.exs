@@ -28,7 +28,7 @@ defmodule AvroUtils.MixProject do
 
   defp deps do
     [
-      {:erlavro, "~> 2.9.8"},
+      {:erlavro, ">= 2.9.8"},
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.20", only: :dev},
       {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false},
