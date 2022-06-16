@@ -7,7 +7,7 @@ defmodule AvroUtils.MixProject do
     [
       app: :avro_utils,
       version: @version,
-      elixir: "~> 1.6",
+      elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: "Avro BigQuery utility library",
@@ -35,8 +35,8 @@ defmodule AvroUtils.MixProject do
       {:stream_data, "~> 0.1", only: [:test, :dev]},
       {:randex, "~> 0.4", only: :test},
       {:google_api_big_query, "~> 0.4", only: :test},
-      {:goth, "~> 1.1", only: :test},
-      {:jose, "~> 1.9.0", only: :test},
+      {:goth, "~> 1.3-rc", only: :test},
+      {:jose, "~> 1.9", only: :test},
       {:hackney, "~> 1.13", only: :test},
       {:temp, "~> 0.4", only: :test}
     ]
