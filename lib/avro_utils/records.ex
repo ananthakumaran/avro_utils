@@ -8,7 +8,6 @@ defmodule AvroUtils.Records do
     :doc,
     :aliases,
     :fields,
-    :fields,
     :fullname,
     :custom
   ])

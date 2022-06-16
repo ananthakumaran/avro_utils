@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 path = Path.join(__DIR__, "service_account.json")
 

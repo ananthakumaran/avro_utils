@@ -35,8 +35,8 @@ defmodule AvroUtils.MixProject do
       {:stream_data, "~> 0.1", only: [:test, :dev]},
       {:randex, "~> 0.4", only: :test},
       {:google_api_big_query, "~> 0.4", only: :test},
-      {:goth, "~> 1.1", only: :test},
-      {:jose, "~> 1.9.0", only: :test},
+      {:goth, "~> 1.3-rc", only: :test},
+      {:jose, "~> 1.9", only: :test},
       {:hackney, "~> 1.13", only: :test},
       {:temp, "~> 0.4", only: :test}
     ]
